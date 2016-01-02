@@ -1,0 +1,26 @@
+Source: heimdall
+Section: electronics
+Priority: extra
+Maintainer: Felix Erkinger <wuxxin@gmail.com>
+Build-Depends: debhelper (>= 9),
+ autoconf,
+ automake,
+ dh-autoreconf,
+ libtool,
+ libusb-1.0-0-dev,
+ pkg-config
+Standards-Version: 3.9.1
+Homepage: http://www.glassechidna.com.au/products/heimdall/
+Vcs-Browser: https://github.com/Benjamin-Dobell/Heimdall
+Vcs-Git: git://git@github.com:Benjamin-Dobell/Heimdall.git
+
+Package: heimdall
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Homepage: http://www.glassechidna.com.au/products/heimdall/
+Description: utility to flash firmware onto Samsung Galaxy S devices
+ Heimdall is a cross-platform open-source utility to flash firmware onto
+ Samsung Galaxy S devices.
+ .
+ Heimdall uses the same protocol as Odin to interact with a device in download
+ Mode.
