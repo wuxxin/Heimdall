@@ -5,6 +5,7 @@ Maintainer: Felix Erkinger <wuxxin@gmail.com>
 Build-Depends: debhelper (>= 9),
  autoconf,
  automake,
+ cmake,
  dh-autoreconf,
  libtool,
  libusb-1.0-0-dev,

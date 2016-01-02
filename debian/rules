@@ -17,7 +17,7 @@ override_dh_autoclean:
 
 override_dh_auto_configure:
 	#  (cd libpit && ./configure)
-	(cd heimdall && ./configure)
+	(cd heimdall && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release ..)
 
 override_dh_auto_build:
 	#  $(MAKE) -C libpit
