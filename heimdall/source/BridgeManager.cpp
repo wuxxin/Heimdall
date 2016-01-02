@@ -650,13 +650,6 @@ bool BridgeManager::SendBulkTransfer(unsigned char *data, int length, int timeou
 
 int BridgeManager::ReceiveBulkTransfer(unsigned char *data, int length, int timeout, bool retry) const
 {
-	if (data == nullptr)
-	{
-		// HACK: It seems WinUSB ignores us when we try to read with length zero.
-		static unsigned char dummyData;
-		data = &dummyData;
-		length = 1;
-	}
 
 	int dataTransferred;
 	int result = libusb_bulk_transfer(deviceHandle, inEndpoint, data, length, &dataTransferred, timeout);
@@ -906,7 +899,7 @@ int BridgeManager::ReceivePitFile(unsigned char **pitBuffer) const
 	}
 
 	PitFileResponse *pitFileResponse = new PitFileResponse();
-	success = ReceivePacket(pitFileResponse, kDefaultTimeoutReceive, kEmptyTransferNone);
+	success = ReceivePacket(pitFileResponse, kDefaultTimeoutReceive, kEmptyTransferAfter);
 	unsigned int fileSize = pitFileResponse->GetFileSize();
 	delete pitFileResponse;
 
