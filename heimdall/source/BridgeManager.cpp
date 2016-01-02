@@ -510,7 +510,7 @@ bool BridgeManager::BeginSession(void)
 
 	BeginSessionPacket beginSessionPacket;
 
-	if (!SendPacket(&beginSessionPacket))
+	if (!SendPacket(&beginSessionPacket, kDefaultTimeoutSend, kEmptyTransferNone))
 	{
 		Interface::PrintError("Failed to begin session!\n");
 		return (false);
@@ -889,7 +889,7 @@ int BridgeManager::ReceivePitFile(unsigned char **pitBuffer) const
 
 	// Start file transfer
 	PitFilePacket *pitFilePacket = new PitFilePacket(PitFilePacket::kRequestDump);
-	success = SendPacket(pitFilePacket, kDefaultTimeoutSend, kEmptyTransferBefore);
+	success = SendPacket(pitFilePacket, kDefaultTimeoutSend, kEmptyTransferBeforeAndAfter);
 	delete pitFilePacket;
 
 	if (!success)
@@ -899,7 +899,7 @@ int BridgeManager::ReceivePitFile(unsigned char **pitBuffer) const
 	}
 
 	PitFileResponse *pitFileResponse = new PitFileResponse();
-	success = ReceivePacket(pitFileResponse, kDefaultTimeoutReceive, kEmptyTransferAfter);
+	success = ReceivePacket(pitFileResponse, kDefaultTimeoutReceive, kEmptyTransferBeforeAndAfter);
 	unsigned int fileSize = pitFileResponse->GetFileSize();
 	delete pitFileResponse;
 
