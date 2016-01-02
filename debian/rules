@@ -7,20 +7,16 @@ export DH_VERBOSE=1
 %:
 	dh $@ --with autoreconf --parallel
 
-override_dh_autoreconf:
-	#  (cd libpit && autoreconf -fi)
-	(cd heimdall && autoreconf -fi)
+#override_dh_autoreconf:
+#	(cd heimdall && autoreconf -fi)
 
-override_dh_autoclean:
-	#  if [ -e libpit/Makafile ]; then $(MAKE) -C libpit clean; fi
-	if [ -e heimdall/Makafile ]; then $(MAKE) -C heimdall clean; fi
+#override_dh_autoclean:
+#	if [ -e heimdall/Makafile ]; then $(MAKE) -C heimdall clean; fi
 
 override_dh_auto_configure:
-	#  (cd libpit && ./configure)
 	(cd heimdall && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release ..)
 
 override_dh_auto_build:
-	#  $(MAKE) -C libpit
 	$(MAKE) -C heimdall
 
 override_dh_installudev:
