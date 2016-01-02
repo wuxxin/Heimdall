@@ -533,7 +533,7 @@ bool BridgeManager::BeginSession(void)
 
 		FilePartSizePacket filePartSizePacket(fileTransferPacketSize);
 
-		if (!SendPacket(&filePartSizePacket, kDefaultTimeoutSend, kEmptyTransferBeforeAndAfter))
+		if (!SendPacket(&filePartSizePacket, kDefaultTimeoutSend, kEmptyTransferBefore))
 		{
 			Interface::PrintError("Failed to send file part size packet!\n");
 			return (false);
@@ -889,7 +889,7 @@ int BridgeManager::ReceivePitFile(unsigned char **pitBuffer) const
 
 	// Start file transfer
 	PitFilePacket *pitFilePacket = new PitFilePacket(PitFilePacket::kRequestDump);
-	success = SendPacket(pitFilePacket, kDefaultTimeoutSend, kEmptyTransferBeforeAndAfter);
+	success = SendPacket(pitFilePacket, kDefaultTimeoutSend, kEmptyTransferBefore);
 	delete pitFilePacket;
 
 	if (!success)
@@ -899,7 +899,7 @@ int BridgeManager::ReceivePitFile(unsigned char **pitBuffer) const
 	}
 
 	PitFileResponse *pitFileResponse = new PitFileResponse();
-	success = ReceivePacket(pitFileResponse, kDefaultTimeoutReceive, kEmptyTransferBeforeAndAfter);
+	success = ReceivePacket(pitFileResponse, kDefaultTimeoutReceive, kEmptyTransferAfter);
 	unsigned int fileSize = pitFileResponse->GetFileSize();
 	delete pitFileResponse;
 
