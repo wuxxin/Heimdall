@@ -7,5 +7,8 @@ export DH_VERBOSE=1
 %:
 	dh $@ --buildsystem=cmake
 
+override_dh_auto_configure:
+	dh_auto_configure -- -DDISABLE_FRONTEND=ON
+
 override_dh_installudev:
 	dh_installudev --name=galaxy-s --priority=60

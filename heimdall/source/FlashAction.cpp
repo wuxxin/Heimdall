@@ -1,15 +1,15 @@
 /* Copyright (c) 2010-2014 Benjamin Dobell, Glass Echidna
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -101,7 +101,7 @@ static bool openFiles(Arguments& arguments, vector<PartitionFile>& partitionFile
 	for (vector<const Argument *>::const_iterator it = arguments.GetArguments().begin(); it != arguments.GetArguments().end(); it++)
 	{
 		const string& argumentName = (*it)->GetName();
-		
+
 		// The only way an argument could exist without being in the argument types map is if it's a wild-card.
 		// The "%d" wild-card refers to a partition by identifier, where as the "%s" wild-card refers to a
 		// partition by name.
@@ -161,9 +161,11 @@ static bool sendTotalTransferSize(BridgeManager *bridgeManager, const vector<Par
 	}
 
 	bool success;
-	
+
 	TotalBytesPacket *totalBytesPacket = new TotalBytesPacket(totalBytes);
-	success = bridgeManager->SendPacket(totalBytesPacket);
+	success = bridgeManager->SendPacket(totalBytesPacket,
+      BridgeManager::kDefaultTimeoutSend,
+      BridgeManager::kEmptyTransferBefore);
 	delete totalBytesPacket;
 
 	if (!success)
@@ -173,7 +175,9 @@ static bool sendTotalTransferSize(BridgeManager *bridgeManager, const vector<Par
 	}
 
 	SessionSetupResponse *totalBytesResponse = new SessionSetupResponse();
-	success = bridgeManager->ReceivePacket(totalBytesResponse);
+	success = bridgeManager->ReceivePacket(totalBytesResponse,
+    BridgeManager::kDefaultTimeoutReceive,
+		BridgeManager::kEmptyTransferNone);
 	int totalBytesResult = totalBytesResponse->GetResult();
 	delete totalBytesResponse;
 
@@ -248,7 +252,7 @@ static bool flashPitData(BridgeManager *bridgeManager, const PitData *pitData)
 static bool flashFile(BridgeManager *bridgeManager, const PartitionFlashInfo& partitionFlashInfo)
 {
 	if (partitionFlashInfo.pitEntry->GetBinaryType() == PitEntry::kBinaryTypeCommunicationProcessor) // Modem
-	{			
+	{
 		Interface::Print("Uploading %s\n", partitionFlashInfo.pitEntry->GetPartitionName());
 
 		if (bridgeManager->SendFile(partitionFlashInfo.file, EndModemFileTransferPacket::kDestinationModem,
@@ -420,7 +424,7 @@ int FlashAction::Execute(int argc, char **argv)
 	bool reboot = arguments.GetArgument("no-reboot") == nullptr;
 	bool resume = arguments.GetArgument("resume") != nullptr;
 	bool verbose = arguments.GetArgument("verbose") != nullptr;
-	
+
 	if (arguments.GetArgument("stdout-errors") != nullptr)
 		Interface::SetStdoutErrors(true);
 
@@ -472,7 +476,7 @@ int FlashAction::Execute(int argc, char **argv)
 	}
 
 	// Open files
-	
+
 	FILE *pitFile = nullptr;
 	vector<PartitionFile> partitionFiles;
 
@@ -511,7 +515,7 @@ int FlashAction::Execute(int argc, char **argv)
 	if (success)
 	{
 		PitData *pitData = getPitData(bridgeManager, pitFile, repartition);
-	
+
 		if (pitData)
 			success = flashPartitions(bridgeManager, partitionFiles, pitData, repartition);
 		else
@@ -524,7 +528,7 @@ int FlashAction::Execute(int argc, char **argv)
 		success = false;
 
 	delete bridgeManager;
-	
+
 	closeFiles(partitionFiles, pitFile);
 
 	return (success ? 0 : 1);
